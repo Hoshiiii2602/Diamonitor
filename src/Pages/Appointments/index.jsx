@@ -1,18 +1,4 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import DateRangeCalender from "../../Components/DateRangeCalender";
-import ErrorPage from "../../Components/ErrorPage";
-import NotAuth from "../../Components/NotAuth";
-import Pagination from "../../Components/Pagination";
-import { useSelectedClinic } from "../../Context/SelectedClinic";
-import { GET } from "../../Controllers/ApiControllers";
-import admin from "../../Controllers/admin";
-import t from "../../Controllers/configs";
-import imageBaseURL from "../../Controllers/image";
-import getCancellationStatusBadge from "../../Hooks/CancellationReqBadge";
-import getStatusColor from "../../Hooks/GetStatusColor";
-import useHasPermission from "../../Hooks/HasPermission";
-import getStatusBadge from "../../Hooks/StatusBadge";
-import AddNewAppointment from "./AddNewAppointment";
 import useDebounce from "@/Hooks/useDebounce.jsx";
 import {
   Alert,
@@ -38,6 +24,20 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DateRangeCalender from "../../Components/DateRangeCalender";
+import ErrorPage from "../../Components/ErrorPage";
+import NotAuth from "../../Components/NotAuth";
+import Pagination from "../../Components/Pagination";
+import { useSelectedClinic } from "../../Context/SelectedClinic";
+import { GET } from "../../Controllers/ApiControllers";
+import admin from "../../Controllers/admin";
+import t from "../../Controllers/configs";
+import imageBaseURL from "../../Controllers/image";
+import getCancellationStatusBadge from "../../Hooks/CancellationReqBadge";
+import getStatusColor from "../../Hooks/GetStatusColor";
+import useHasPermission from "../../Hooks/HasPermission";
+import getStatusBadge from "../../Hooks/StatusBadge";
+import AddNewAppointment from "./AddNewAppointment";
 
 const getPageIndices = (currentPage, itemsPerPage) => {
   const startIndex = (currentPage - 1) * itemsPerPage;

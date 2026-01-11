@@ -1,4 +1,36 @@
 /* eslint-disable react/prop-types */
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardBody,
+  Divider,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
+  useColorModeValue,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChevronDownIcon } from "lucide-react";
+import moment from "moment";
+import { useState } from "react";
 import UsersCombobox from "../../Components/UsersComboBox";
 import { ADD, GET } from "../../Controllers/ApiControllers";
 import ShowToast from "../../Controllers/ShowToast";
@@ -8,70 +40,41 @@ import useDoctorData from "../../Hooks/UseDoctorData";
 import usePatientData from "../../Hooks/UsePatientsData";
 import AddPatients from "../Patients/AddPatients";
 import AvailableTimeSlotes from "./AvailableTimeSlotes";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-  Box,
-  Flex,
-  useColorModeValue,
-  Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  CardBody,
-  Card,
-  Divider,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Badge,
-  Select,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronDownIcon } from "lucide-react";
-import moment from "moment";
-import { useState } from "react";
 
-let defStatus = ["Chờ xác nhận", "Đã xác nhận"];
+let defStatus = ["Pending", "Confirmed"];
 
 const getTypeBadge = (type) => {
+  // type is API enum: 'Emergency' | 'OPD' | 'Video Consultant'
   switch (type) {
-    case "Khẩn cấp":
+    case "Emergency":
       return (
         <Badge colorScheme="red" p={"5px"} px={10}>
-          {type}
+          {"Khẩn cấp"}
         </Badge>
       );
-    case "Khám trực tiếp":
+    case "OPD":
       return (
         <Badge colorScheme="green" p={"5px"} px={10}>
-          {type}
+          {"Khám trực tiếp"}
         </Badge>
       );
+    case "Video Consultant":
     default:
       return (
         <Badge colorScheme="blue" p={"5px"} px={10}>
-          {type}
+          {"Tư vấn video"}
         </Badge>
       );
   }
 };
 const getFee = (type, doct) => {
+  // type is API enum
   switch (type) {
-    case "Khẩn cấp":
+    case "Emergency":
       return doct?.emg_fee;
-    case "Khám trực tiếp":
+    case "OPD":
       return doct?.opd_fee;
-    case "Tư vấn video":
+    case "Video Consultant":
       return doct?.video_fee;
     default:
       return doct?.emg_fee;
@@ -127,10 +130,10 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
   const [doct, setdoct] = useState();
   const [selectedDate, setselectedDate] = useState();
   const [selectedSlot, setselectedSlot] = useState();
-  const [status, setstatus] = useState("Đã xác nhận");
-  const [type, settype] = useState();
-  const [paymentStatus, setpaymentStatus] = useState();
-  const [paymentMathod, setpaymentMathod] = useState();
+  const [status, setstatus] = useState("Confirmed");
+  const [type, settype] = useState(); // 'OPD' | 'Video Consultant' | 'Emergency'
+  const [paymentStatus, setpaymentStatus] = useState(); // 'Paid' | 'Unpaid'
+  const [paymentMathod, setpaymentMathod] = useState(); // numeric id
   const queryClient = useQueryClient();
   const [defalutDataForPationt, setdefalutDataForPationt] = useState(PatientID);
 
@@ -153,7 +156,8 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
     if (!selectedSlot) return "Khung thời gian";
     if (!status) return "Trạng thái lịch hẹn";
     if (!paymentStatus) return "Trạng thái thanh toán";
-    if (paymentStatus === "Trả tiền" && !paymentMathod) return "Phương thức thanh toán";
+    if (paymentStatus === "Paid" && !paymentMathod)
+      return "Phương thức thanh toán";
     return null; // All values are present
   };
   const mutation = useMutation({
@@ -180,7 +184,7 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
           payment_method: paymentMathod || null,
           service_charge: 0,
           payment_transaction_id:
-            paymentStatus === "Trả tiền" ? "Trả tiền tại bệnh viện" : null,
+            paymentStatus === "Paid" ? "Trả tiền tại bệnh viện" : null,
           is_wallet_txn: 0,
           payment_status: paymentStatus,
           source: "Admin",
@@ -224,7 +228,7 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
                   addNew={true}
                   addOpen={AddPatientonOpen}
                 />
-                Hoặc <br/>
+                Hoặc <br />
                 <Button
                   size={"xs"}
                   w={200}
@@ -236,15 +240,14 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
                   Thêm bệnh nhân
                 </Button>
               </Flex>
-              
             </Flex>
             <Flex flex={2} mt={2}>
-                <UsersCombobox
-                  data={doctorsData}
-                  name={"Doctor"}
-                  setState={setdoct}
-                />
-              </Flex>
+              <UsersCombobox
+                data={doctorsData}
+                name={"Doctor"}
+                setState={setdoct}
+              />
+            </Flex>
             <Card mt={5} bg={useColorModeValue("white", "gray.700")}>
               <CardBody p={3} as={"form"}>
                 {" "}
@@ -284,36 +287,37 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
                         {type ? getTypeBadge(type) : "Chọn loại lịch hẹn"}
                       </MenuButton>
                       <MenuList>
-                        {["Khám trực tiếp", "Tư vấn video", "Khẩn cấp"]?.map(
-                          (option) => (
-                            <MenuItem
-                              key={option}
-                              onClick={() => {
-                                if (option !== "Khám trực tiếp") {
-                                  setpaymentStatus("Trả tiền");
-                                }
+                        {[
+                          { value: "OPD", label: "Khám trực tiếp" },
+                          { value: "Video Consultant", label: "Tư vấn video" },
+                          { value: "Emergency", label: "Khẩn cấp" },
+                        ]?.map((option) => (
+                          <MenuItem
+                            key={option.value}
+                            onClick={() => {
+                              // For non-OPD types, default to Paid
+                              if (option.value !== "OPD") {
+                                setpaymentStatus("Paid");
+                              }
 
-                                if (option === "Khẩn cấp") {
-                                  settype(option);
-                                  setselectedDate(
-                                    moment().format("YYYY-MM-DD")
-                                  );
-                                  setselectedSlot({
-                                    time_start: moment().format("HH:mm"),
-                                  });
-                                } else {
-                                  setselectedDate();
-                                  setselectedSlot();
-                                  settype(option);
-                                }
-                              }}
-                            >
-                              <Box display="flex" alignItems="center">
-                                {getTypeBadge(option)}
-                              </Box>
-                            </MenuItem>
-                          )
-                        )}
+                              if (option.value === "Emergency") {
+                                settype(option.value);
+                                setselectedDate(moment().format("YYYY-MM-DD"));
+                                setselectedSlot({
+                                  time_start: moment().format("HH:mm"),
+                                });
+                              } else {
+                                setselectedDate();
+                                setselectedSlot();
+                                settype(option.value);
+                              }
+                            }}
+                          >
+                            <Box display="flex" alignItems="center">
+                              {getTypeBadge(option.value)}
+                            </Box>
+                          </MenuItem>
+                        ))}
                       </MenuList>
                     </Menu>
                   </FormControl>
@@ -329,7 +333,11 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
                       size={"sm"}
                       fontWeight={600}
                       variant="flushed"
-                      value={moment(selectedDate).format("DD-MM-YYYY")}
+                      value={
+                        selectedDate
+                          ? moment(selectedDate).format("DD-MM-YYYY")
+                          : ""
+                      }
                       onClick={() => {
                         if (!doct) {
                           return ShowToast(
@@ -459,8 +467,8 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
                       value={paymentStatus}
                     >
                       <option value="Paid">Trả tiền</option>
-                      {type === "Khám trực tiếp" && (
-                        <option value="Chưa thanh toán">Chưa thanh toán</option>
+                      {type === "OPD" && (
+                        <option value="Unpaid">Chưa thanh toán</option>
                       )}
                     </Select>
                   </FormControl>
@@ -476,11 +484,11 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
                       placeholder="Chọn phương thức thanh toán"
                       variant="flushed"
                       onChange={(e) => {
-                        setpaymentMathod(e.target.value);
+                        setpaymentMathod(Number(e.target.value));
                       }}
                     >
                       {paymentModes.map((item) => (
-                        <option value={item.name} key={item.id}>
+                        <option value={item.id} key={item.id}>
                           {item.name}
                         </option>
                       ))}
@@ -504,7 +512,7 @@ function AddNewAppointment({ isOpen, onClose, PatientID }) {
                       value={doct && type ? getFee(type, doct) : 0}
                     />
                   </FormControl>
-                  <FormControl w={"50%"}> 
+                  <FormControl w={"50%"}>
                     <FormLabel
                       fontSize={"sm"}
                       mb={0}

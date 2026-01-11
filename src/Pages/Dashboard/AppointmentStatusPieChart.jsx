@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import { Box, Text, useTheme } from "@chakra-ui/react";
 import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
   ArcElement,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  Title,
+  Tooltip,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 

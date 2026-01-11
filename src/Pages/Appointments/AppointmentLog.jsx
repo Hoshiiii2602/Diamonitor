@@ -1,3 +1,4 @@
+import useDebounce from "@/Hooks/useDebounce.jsx";
 import DynamicTable from "../../Components/DataTable";
 import DateRangeCalender from "../../Components/DateRangeCalender";
 import ErrorPage from "../../Components/ErrorPage";
@@ -8,7 +9,6 @@ import { GET } from "../../Controllers/ApiControllers";
 import admin from "../../Controllers/admin";
 import useHasPermission from "../../Hooks/HasPermission";
 import getStatusBadge from "../../Hooks/StatusBadge";
-import useDebounce from "@/Hooks/useDebounce.jsx";
 
 /* eslint-disable react/prop-types */
 import {
