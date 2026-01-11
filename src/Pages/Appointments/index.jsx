@@ -158,7 +158,9 @@ export default function Appointments() {
         <Box>
           <Button
             size={"sm"}
-            colorScheme="blue"
+            bg="green.500"
+            color="white"
+            _hover={{ bg: "green.600" }}
             onClick={() => {
               onOpen();
             }}
@@ -191,7 +193,9 @@ export default function Appointments() {
         <Button
           isLoading={isFetching || isRefetching}
           size={"sm"}
-          colorScheme="blue"
+          bg="blue.500"
+          color="white"
+          _hover={{ bg: "blue.600" }}
           onClick={() => {
             queryClient.invalidateQueries(
               ["appointments", page, debouncedSearchQuery, statusFilters],
