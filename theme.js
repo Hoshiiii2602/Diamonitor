@@ -1,8 +1,11 @@
 ﻿import { extendTheme } from "@chakra-ui/react";
 
 export const theme = extendTheme({
-  initialColorMode: "dark", // 'dark' | 'light'
-  useSystemColorMode: false,
+  // Chakra v2 config should be under `config`
+  config: {
+    initialColorMode: "dark",
+    useSystemColorMode: false,
+  },
   styles: {
     global: {
       "::-webkit-scrollbar": {

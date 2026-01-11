@@ -1,23 +1,23 @@
 /* eslint-disable react/prop-types */
 // theme css file
-import { daysBack } from "../Controllers/dateConfig";
 import {
   Box,
-  useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   Button,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import moment from "moment";
 import { useState } from "react";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
+import { daysBack } from "../Controllers/dateConfig";
 // main css file
 import "react-date-range/dist/theme/default.css";
 
